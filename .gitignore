@@ -1,0 +1,6 @@
+dataset/*
+archive.zip
+.venv/*
+__pycache__/*
+modelos/*
+test_accuracy/*
