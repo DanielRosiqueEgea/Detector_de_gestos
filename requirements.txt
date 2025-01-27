@@ -1,0 +1,15 @@
+keras==2.11.0
+matplotlib==3.10.0
+mediapipe==0.10.11
+numpy==2.2.2
+opencv_contrib_python==4.11.0.86
+opencv_python==4.11.0.86
+opencv_utils==0.0.2
+pynput==1.7.7
+scikit_learn==1.6.1
+seaborn==0.13.2
+tensorflow==2.18.0
+tensorflow_gpu==2.11.0
+torch==2.5.1
+torchvision==0.20.1
+tqdm==4.67.1

@@ -1,6 +1,13 @@
 dataset/*
+dataset_propio/*
 archive.zip
 .venv/*
 __pycache__/*
-modelos/*
 test_accuracy/*
+
+modelos/model_vgg16_with_my_data.h5
+modelos/model_vgg16.h5
+modelos/pytorch_model.pth
+modelos/tensorflow_model_dinamic.h5
+modelos/tensorflow_model.h5
+modelos/vgg16_1.h5

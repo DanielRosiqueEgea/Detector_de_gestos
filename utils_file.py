@@ -2,6 +2,8 @@ import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
 import tensorflow as tf
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import layers, models
@@ -9,6 +11,18 @@ from tensorflow.keras.optimizers import Adam
 import os
 import seaborn as sns
 from tqdm import tqdm
+import itertools
+
+
+
+def get_model_file(model_path, model_name):
+    model_number = 1
+    for root, dirs, files in os.walk(model_path):
+        for file in files:
+            if file.startswith(model_name):
+                model_number += 1
+
+    return f"{model_name}_{model_number}.h5"
 
 def get_class_indices():
     class_indices = {chr(i + 65): i for i in range(26)}  # 'A' a 'Z'
@@ -262,3 +276,57 @@ def plot_history(history):
     plt.legend()
 
     plt.show()
+
+
+def plot_confusion_matrix(y, y_pred, class_indices):
+    """Genera y muestra la matriz de confusión con etiquetas correctas."""
+    y = np.argmax(y, axis=1)
+    y_pred = np.argmax(y_pred, axis=1)
+    cm = confusion_matrix(y, y_pred)
+
+    plt.figure(figsize=(10, 8))
+    ax = plt.subplot()
+    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Purples)
+    plt.colorbar()
+    plt.title("Confusion Matrix")
+    
+    labels = list(class_indices.keys())  # Se obtiene la lista de etiquetas de clases
+    tick_marks = np.arange(len(labels))
+    
+    plt.xticks(tick_marks, labels, rotation=45)
+    plt.yticks(tick_marks, labels)
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    
+    # Anotaciones dentro de la matriz
+    limit = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], 'd'), horizontalalignment="center",
+                 color="white" if cm[i, j] > limit else "black")
+    
+    plt.show()
+
+
+
+def calculate_metrics(class_indices, y_train, y_pred,output_report=None):
+    y_true = np.argmax(y_train, axis=1)
+    y_pred_labels = np.argmax(y_pred, axis=1)
+
+    # Calcular métricas
+    accuracy = accuracy_score(y_true, y_pred_labels)
+    precision = precision_score(y_true, y_pred_labels, average='weighted')
+    recall = recall_score(y_true, y_pred_labels, average='weighted')
+    f1 = f1_score(y_true, y_pred_labels, average='weighted')
+
+    report = classification_report(y_true, y_pred_labels, target_names=list(class_indices.keys()))
+    print("\n===== Métricas de Evaluación =====")
+    print(f"Accuracy:  {accuracy:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall:    {recall:.4f}")
+    print(f"F1 Score:  {f1:.4f}")
+    print("\nClassification Report:\n")
+    print(report)
+
+    if output_report is not None:
+        with open(output_report, "w") as f:
+            f.write(report)

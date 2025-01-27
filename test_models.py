@@ -76,7 +76,8 @@ mouse_listener = mouse.Listener(on_scroll=on_scroll)
 mouse_listener.start()
 
 
-model_to_test = "modelos/model_vgg16_with_my_data.h5"
+# model_to_test = "modelos/model_vgg16_with_my_data.h5"
+model_to_test = "modelos/modelo_propio_callbacks_1.h5"
 model = load_model(model_to_test)
 
 img_size = 64
@@ -93,10 +94,16 @@ y_train = []
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 
-cap = cv.VideoCapture(2)
+for i in range(3):
+    try:
+        cap = cv.VideoCapture(3-i)
+        if cap.isOpened():
+            break
+    except:
+        pass
 
-if not (cap.isOpened()):
-    print("Could not open video device")
+if not cap.isOpened():
+    print("No se pudo abrir la cámara")
     exit()
 
 frame_idx = 0
@@ -158,8 +165,8 @@ with mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_conf
                 y_true.append(testing_char)
                 y_pred.append(predicted_class)
 
-                store_training_data(X_train, y_train, hand_crop,
-                                    class_indices, testing_char)
+                # store_training_data(X_train, y_train, hand_crop,
+                #                     class_indices, testing_char)
                 
                 # mostrar_ejemplos_opencv(X_train, y_train, index_to_class, num_ejemplos=10,  window_name="hand_crop")
                 
@@ -182,17 +189,3 @@ cv.destroyAllWindows()
 
 listener.stop()
 mouse_listener.stop()
-
-# cm = confusion_matrix(y_true, y_pred, labels=list(class_indices.keys()))
-# mostrar_matriz_confusion(cm)
-
-# # Guardar la matriz en CSV
-# np.savetxt("matriz_confusion.csv", cm, delimiter=",", fmt="%d")
-
-# dynamic_train()
-# model.save("modelos/tensorflow_model_dinamic.h5")
-
-
-# with open("history.txt", "w") as f:
-#     for entry in prediction_history:
-#         f.write(f"{entry[0]} {entry[1]:.2f} {entry[2]}\n")
